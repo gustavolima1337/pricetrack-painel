@@ -46,19 +46,18 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
-    const apiBase = process.env.API_BASE_URL || 'https://pricetrack-api.onrender.com';
     return [
       {
         source: '/api/price-data',
-        destination: `${apiBase}/api/products/`,
+        destination: 'http://127.0.0.1:8000/api/products/',
       },
       {
         source: '/api/url-data',
-        destination: `${apiBase}/api/urls/`,
+        destination: 'http://127.0.0.1:8000/api/urls/',
       },
       {
         source: '/api/urls/update_is_active',
-        destination: `${apiBase}/api/urls/update_is_active`,
+        destination: 'http://127.0.0.1:8000/api/urls/update_is_active',
       },
     ];
   },
