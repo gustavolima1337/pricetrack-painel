@@ -38,6 +38,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'http2.mlstatic.com',
       }
     ],
   },
@@ -45,15 +49,15 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/price-data',
-        destination: 'https://pricetrack-api.onrender.com/api/products/',
+        destination: 'http://127.0.0.1:8000/api/products/',
       },
       {
         source: '/api/url-data',
-        destination: 'https://pricetrack-api.onrender.com/api/urls/',
+        destination: 'http://127.0.0.1:8000/api/urls/',
       },
-       {
+      {
         source: '/api/urls/update_is_active',
-        destination: 'https://pricetrack-api.onrender.com/api/update_is_active',
+        destination: 'http://127.0.0.1:8000/api/urls/update_is_active',
       },
     ];
   },

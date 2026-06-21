@@ -83,8 +83,8 @@ function DashboardContent() {
       setError(null);
       try {
         const [productsResponse, urlsResponse] = await Promise.all([
-            fetch('/api/price-data'),
-            fetch('/api/url-data'),
+            fetch('/api/price-data', { cache: 'no-store' }),
+            fetch('/api/url-data', { cache: 'no-store' }),
         ]);
 
         if (!productsResponse.ok) {

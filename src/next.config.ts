@@ -45,15 +45,15 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/price-data',
-        destination: 'http://localhost:8000/api/products/',
+        destination: 'http://127.0.0.1:8000/api/products/',
       },
       {
         source: '/api/url-data',
-        destination: 'http://201.23.64.234:8000/api/urls/',
+        destination: 'http://127.0.0.1:8000/api/urls/',
       },
-       {
+      {
         source: '/api/urls/update_is_active',
-        destination: 'http://201.23.64.234:8000/api/urls/update_is_active/',
+        destination: 'http://127.0.0.1:8000/api/urls/update_is_active',
       },
     ];
   },

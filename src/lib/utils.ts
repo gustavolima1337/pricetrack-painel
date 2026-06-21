@@ -7,6 +7,7 @@ const ALLOWED_IMAGE_HOSTNAMES = [
     'a-static.mlcdn.com.br',
     'm.media-amazon.com',
     'res.cloudinary.com',
+    'http2.mlstatic.com',
 ];
 
 

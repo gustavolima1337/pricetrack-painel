@@ -87,24 +87,17 @@ function ProductAccordionItem({ ean, productGroup }: { ean: string, productGroup
     const [isCopied, setIsCopied] = useState(false);
     
     const { firstProduct, imageSrc } = useMemo(() => {
-        const epocaProduct = productGroup.find(p => p.marketplace === 'Época Cosméticos' && isValidImageUrl(p.image));
-        const belezaProduct = productGroup.find(p => p.marketplace === 'Beleza na Web' && isValidImageUrl(p.image));
-        const firstAvailable = productGroup.find(p => isValidImageUrl(p.image));
-
-        const productToUse = epocaProduct || belezaProduct || productGroup[0];
-        let image = `https://placehold.co/100x100.png`;
-
-        if (epocaProduct && epocaProduct.image) {
-            image = epocaProduct.image;
-        } else if (belezaProduct && belezaProduct.image) {
-            image = belezaProduct.image;
-        } else if (firstAvailable && firstAvailable.image) {
-            image = firstAvailable.image;
+        const priority = ['Beleza na Web', 'Mercado Livre', 'Época Cosméticos', 'Amazon', 'Magazine Luiza'];
+        let chosen = null;
+        for (const mp of priority) {
+            chosen = productGroup.find(p => p.marketplace === mp && isValidImageUrl(p.image)) || null;
+            if (chosen) break;
         }
+        if (!chosen) chosen = productGroup.find(p => isValidImageUrl(p.image)) || null;
 
         return {
-            firstProduct: productToUse,
-            imageSrc: image
+            firstProduct: chosen || productGroup[0],
+            imageSrc: chosen?.image || `https://placehold.co/100x100.png`,
         };
 
     }, [productGroup]);
