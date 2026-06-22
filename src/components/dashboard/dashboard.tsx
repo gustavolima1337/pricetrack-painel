@@ -4,7 +4,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import type { Product, UrlInfo } from '@/types';
-import { AlertCircle, Download } from 'lucide-react';
+import { AlertCircle, Download, TrendingUp, RefreshCw } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -265,24 +265,61 @@ function DashboardContent() {
 
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen flex-col bg-background">
         <Toaster />
-        <div className="flex-1 flex flex-col overflow-auto">
-             <header className="px-4 pt-4 md:px-6 md:pt-6">
-                <div className="flex-1 min-w-[200px]">
-                    <h1 className="text-2xl font-bold text-foreground font-headline tracking-tight">PriceTrack</h1>
-                    <p className="text-sm text-muted-foreground">Compare preços de diferentes marketplaces de forma eficiente.</p>
+
+        {/* Header */}
+        <header className="shrink-0 bg-slate-900 text-white shadow-lg z-10">
+            <div className="px-4 md:px-8 h-16 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center shrink-0">
+                        <TrendingUp className="h-4 w-4 text-white" />
+                    </div>
+                    <div className="hidden sm:block">
+                        <p className="text-base font-bold leading-tight tracking-tight">PriceTrack</p>
+                        <p className="text-xs text-slate-400 leading-tight">Inteligência de preços em tempo real</p>
+                    </div>
                 </div>
-            </header>
+
+                <div className="flex items-center gap-3 text-sm text-slate-300">
+                    {!loading && (
+                        <span className="hidden md:flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                            {products.length} produtos carregados
+                        </span>
+                    )}
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors text-xs font-medium"
+                    >
+                        <RefreshCw className="h-3.5 w-3.5" />
+                        <span className="hidden sm:inline">Atualizar</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div className="flex-1 flex flex-col overflow-auto">
             <Tabs defaultValue="overview" className="w-full flex flex-col flex-1">
-                <div className="px-4 md:px-6 pt-4">
-                     <TabsList className="w-full flex-wrap h-auto justify-start max-w-none md:max-w-2xl gap-2">
-                        <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-                        <TabsTrigger value="granular">Análise por Marketplace</TabsTrigger>
-                        <TabsTrigger value="buybox">Análise de Buybox</TabsTrigger>
-                        <TabsTrigger value="seller">Análise por Vendedor</TabsTrigger>
-                         <TabsTrigger value="geral">Análise Geral</TabsTrigger>
-                         <TabsTrigger value="urls">Gerenciar URLs</TabsTrigger>
+                {/* Tab nav */}
+                <div className="sticky top-0 z-10 shrink-0 bg-white border-b shadow-sm px-4 md:px-8">
+                    <TabsList className="h-auto bg-transparent gap-0 p-0 flex-wrap">
+                        {[
+                            { value: 'overview',  label: 'Visão Geral' },
+                            { value: 'granular',  label: 'Por Marketplace' },
+                            { value: 'buybox',    label: 'Buybox' },
+                            { value: 'seller',    label: 'Por Vendedor' },
+                            { value: 'geral',     label: 'Análise Geral' },
+                            { value: 'urls',      label: 'Gerenciar URLs' },
+                        ].map(tab => (
+                            <TabsTrigger
+                                key={tab.value}
+                                value={tab.value}
+                                className="relative rounded-none border-b-2 border-transparent px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:bg-transparent"
+                            >
+                                {tab.label}
+                            </TabsTrigger>
+                        ))}
                     </TabsList>
                 </div>
                 <TabsContent value="overview" className="mt-0 p-4 md:p-6 overflow-y-auto">

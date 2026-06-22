@@ -10,7 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { formatCurrency, isValidImageUrl, isValidHttpUrl, cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '../ui/button';
-import { ExternalLink, CheckCircle, XCircle, Download, ShoppingCart, BarChart, AlertTriangle, Crown } from 'lucide-react';
+import { ExternalLink, CheckCircle, XCircle, Download, ShoppingCart, BarChart, Crown } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import * as XLSX from 'xlsx';
@@ -180,7 +180,7 @@ export function BuyboxCompetitionAnalysis({ allProducts, loading }: BuyboxCompet
             let nextCompetitor: BuyboxAnalysis['nextCompetitor'] = undefined;
             let winner: BuyboxAnalysis['winner'];
 
-            if (winnerInMarketplace.id === myOffer.id) {
+            if (selectedSellers.includes(winnerInMarketplace.key_loja!)) {
                 if (competitorsInMarketplace.length === 0) {
                     status = 'winning_alone';
                 } else {
@@ -376,36 +376,33 @@ export function BuyboxCompetitionAnalysis({ allProducts, loading }: BuyboxCompet
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <Card>
-                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">Total Ofertas Analisadas</CardTitle>
-                                <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{kpis.totalOffered}</div>
-                                <p className="text-xs text-muted-foreground">SKU-Marketplace únicos</p>
-                            </CardContent>
-                        </Card>
-                         <Card>
-                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">Buyboxes Ganhos</CardTitle>
-                                <CheckCircle className="h-4 w-4 text-green-500" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{kpis.winningCount}</div>
-                                <p className="text-xs text-muted-foreground">Ofertas com menor preço</p>
-                            </CardContent>
-                        </Card>
-                         <Card>
-                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">Buyboxes Perdidos</CardTitle>
-                                <XCircle className="h-4 w-4 text-red-500" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{kpis.losingCount}</div>
-                                <p className="text-xs text-muted-foreground">Ofertas com preço maior</p>
-                            </CardContent>
-                        </Card>
+                        <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-lg bg-slate-200 flex items-center justify-center shrink-0">
+                                <ShoppingCart className="h-5 w-5 text-slate-600" />
+                            </div>
+                            <div>
+                                <p className="text-3xl font-bold text-slate-900">{kpis.totalOffered}</p>
+                                <p className="text-xs text-slate-500 mt-0.5">Total de ofertas analisadas</p>
+                            </div>
+                        </div>
+                        <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4 flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-lg bg-emerald-200 flex items-center justify-center shrink-0">
+                                <CheckCircle className="h-5 w-5 text-emerald-700" />
+                            </div>
+                            <div>
+                                <p className="text-3xl font-bold text-emerald-700">{kpis.winningCount}</p>
+                                <p className="text-xs text-emerald-600 mt-0.5">Buyboxes ganhos</p>
+                            </div>
+                        </div>
+                        <div className="rounded-xl bg-red-50 border border-red-200 p-4 flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-lg bg-red-200 flex items-center justify-center shrink-0">
+                                <XCircle className="h-5 w-5 text-red-700" />
+                            </div>
+                            <div>
+                                <p className="text-3xl font-bold text-red-700">{kpis.losingCount}</p>
+                                <p className="text-xs text-red-600 mt-0.5">Buyboxes perdidos</p>
+                            </div>
+                        </div>
                     </div>
                 </CardContent>
             </Card>
@@ -435,7 +432,7 @@ export function BuyboxCompetitionAnalysis({ allProducts, loading }: BuyboxCompet
                                     fill="#8884d8"
                                     dataKey="value"
                                 >
-                                    {charts.winsByMarketplace.map((entry, index) => (
+                                    {charts.winsByMarketplace.map((_entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
@@ -475,7 +472,7 @@ export function BuyboxCompetitionAnalysis({ allProducts, loading }: BuyboxCompet
                                     fill="#8884d8"
                                     dataKey="value"
                                 >
-                                    {charts.lossesByMarketplace.map((entry, index) => (
+                                    {charts.lossesByMarketplace.map((_entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS_COMPETITORS[index % COLORS_COMPETITORS.length]} />
                                     ))}
                                 </Pie>
@@ -514,7 +511,7 @@ export function BuyboxCompetitionAnalysis({ allProducts, loading }: BuyboxCompet
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {topSellers.map((seller, index) => (
+                                {topSellers.map((seller) => (
                                 <TableRow key={seller.name}>
                                     <TableCell className="font-medium">{seller.name}</TableCell>
                                     <TableCell className="text-right font-bold">{seller.count}</TableCell>
