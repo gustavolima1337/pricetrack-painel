@@ -35,24 +35,32 @@ interface GroupedProduct {
 export function PriceComparisonTable({ allProducts, loading }: PriceComparisonTableProps) {
   const [selectedEans, setSelectedEans] = useState<string[]>([]);
   const [selectedMarketplaces, setSelectedMarketplaces] = useState<string[]>([]);
+  const [selectedSellers, setSelectedSellers] = useState<string[]>([]);
   const [showIncomplete, setShowIncomplete] = useState(false);
+
+  const uniqueSellers = useMemo(() => {
+    const sellers = new Map<string, string>();
+    allProducts.forEach(p => {
+      if (p.key_loja && !sellers.has(p.key_loja)) sellers.set(p.key_loja, p.seller);
+    });
+    return Array.from(sellers.entries())
+      .map(([value, label]) => ({ value, label }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }, [allProducts]);
 
   const { groupedProducts, uniqueMarketplaces } = useMemo(() => {
     const marketplaces = [...new Set(allProducts.map(p => p.marketplace).filter(Boolean))].sort();
 
-    const productsByEan = allProducts.reduce((acc, product) => {
+    const source = selectedSellers.length > 0
+      ? allProducts.filter(p => selectedSellers.includes(p.key_loja!))
+      : allProducts;
+
+    const productsByEan = source.reduce((acc, product) => {
       if (!product.ean) return acc;
 
       if (!acc[product.ean]) {
         const image = isValidImageUrl(product.image) ? product.image! : 'https://placehold.co/100x100.png';
-
-        acc[product.ean] = {
-            ean: product.ean,
-            name: product.name,
-            brand: product.brand,
-            image: image,
-            offers: {},
-        };
+        acc[product.ean] = { ean: product.ean, name: product.name, brand: product.brand, image, offers: {} };
       }
 
       if (acc[product.ean].image.includes('placehold.co') && isValidImageUrl(product.image)) {
@@ -61,22 +69,22 @@ export function PriceComparisonTable({ allProducts, loading }: PriceComparisonTa
 
       const existingOffer = acc[product.ean].offers[product.marketplace];
       if (!existingOffer || product.price < existingOffer.price) {
-          acc[product.ean].offers[product.marketplace] = {
-              price: product.price,
-              seller: product.seller,
-              url: product.url,
-              change_price: product.change_price,
-          };
+        acc[product.ean].offers[product.marketplace] = {
+          price: product.price,
+          seller: product.seller,
+          url: product.url,
+          change_price: product.change_price,
+        };
       }
 
       return acc;
     }, {} as Record<string, GroupedProduct>);
 
     return {
-        groupedProducts: Object.values(productsByEan),
-        uniqueMarketplaces: marketplaces
+      groupedProducts: Object.values(productsByEan),
+      uniqueMarketplaces: marketplaces,
     };
-  }, [allProducts]);
+  }, [allProducts, selectedSellers]);
 
   const visibleMarketplaces = useMemo(() => {
     if (selectedMarketplaces.length === 0) return uniqueMarketplaces;
@@ -170,6 +178,14 @@ export function PriceComparisonTable({ allProducts, loading }: PriceComparisonTa
                     options={uniqueMarketplaces.map(m => ({ value: m, label: m }))}
                     selectedValues={selectedMarketplaces}
                     onChange={(value) => setSelectedMarketplaces(prev => prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value])}
+                />
+            </div>
+            <div className="flex-1 min-w-0">
+                <SearchableSelect
+                    placeholder="Filtrar por Seller..."
+                    options={uniqueSellers}
+                    selectedValues={selectedSellers}
+                    onChange={(value) => setSelectedSellers(prev => prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value])}
                 />
             </div>
         </div>
